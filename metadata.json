@@ -1,0 +1,6 @@
+{
+  "name": "MAGwear Kolektions",
+  "description": "Premium sneaker, perfume, and fashion boutique owned by Aggrey Mathias",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

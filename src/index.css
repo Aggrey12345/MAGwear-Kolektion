@@ -1,0 +1,118 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;1,400;1,700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk", sans-serif;
+  --font-serif: "Playfair Display", Georgia, serif;
+  
+  --color-brand-gold: #D4AF37;
+  --color-brand-orange: #F27D26;
+  --color-brand-copper: #B87333;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    font-family: var(--font-sans);
+    overflow-x: hidden;
+  }
+
+  /* Custom Premium Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0d0d0d;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #2a2a2a;
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #F27D26;
+  }
+}
+
+/* Custom premium bento grid card utilities */
+.bento-card {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 1.5rem; /* rounded-3xl */
+  position: relative;
+  overflow: hidden;
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 25s linear infinite;
+}
+
+.dark .bento-card {
+  background: #0A0A0A;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.bento-card {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.07);
+}
+
+.dark .bento-card:hover {
+  border-color: #F27D26;
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(242, 125, 38, 0.1);
+}
+
+.bento-card:hover {
+  border-color: #F27D26;
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06), 0 0 20px rgba(242, 125, 38, 0.05);
+}
+
+/* Linear Gold Gradient with warm orange hue matching requested Bento theme */
+.gold-gradient {
+  background: linear-gradient(135deg, #F27D26 0%, #D4AF37 100%);
+}
+
+.gold-gradient-text {
+  background: linear-gradient(135deg, #F27D26 0%, #D4AF37 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Custom visual glow utility classes for luxurious street luxury atmosphere */
+.gold-text-glow {
+  text-shadow: 0 0 10px rgba(212, 175, 55, 0.20);
+}
+
+.orange-text-glow {
+  text-shadow: 0 0 12px rgba(242, 125, 38, 0.35);
+}
+
+.gold-border-glow:hover {
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.15);
+  border-color: rgba(212, 175, 55, 0.5);
+}
+
+.orange-border-glow:hover {
+  box-shadow: 0 0 15px rgba(242, 125, 38, 0.15);
+  border-color: rgba(242, 125, 38, 0.5);
+}
+
+/* Base custom font utility classes in case tailwind overrides */
+.font-display {
+  font-family: var(--font-display), sans-serif;
+}
+
+.font-serif {
+  font-family: var(--font-serif), Georgia, serif;
+}
+
