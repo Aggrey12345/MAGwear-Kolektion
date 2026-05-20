@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { X, Trash2, Plus, Minus, ShoppingBag, CreditCard, Sparkles, CheckCircle2, Ticket } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { CartItem, Product } from '../types';
+import { useFirebase } from './FirebaseProvider';
+import { signInWithGoogle } from '../firebase';
 
 interface ShoppingCartProps {
   isOpen: boolean;
@@ -20,6 +22,7 @@ export default function ShoppingCart({
   onRemoveItem,
   onClearCart
 }: ShoppingCartProps) {
+  const { user, submitOrder, orders } = useFirebase();
   const [promoCode, setPromoCode] = useState('');
   const [promoApplied, setPromoApplied] = useState(false);
   const [promoError, setPromoError] = useState('');
@@ -40,14 +43,38 @@ export default function ShoppingCart({
     }
   };
 
-  const handleTriggerCheckout = () => {
+  const handleTriggerCheckout = async () => {
     if (cartItems.length === 0) return;
+    
+    let activeUser = user;
+    if (!activeUser) {
+      try {
+        activeUser = await signInWithGoogle();
+      } catch (err) {
+        console.error("Authenticating checkout canceled or failed:", err);
+        return;
+      }
+    }
+
+    if (!activeUser) return;
     setCheckoutStep('purchasing');
     
-    // Simulate luxury blockchain or merchant payment clearing
-    setTimeout(() => {
+    try {
+      await submitOrder({
+        customerName: activeUser.displayName || 'Valued Curator',
+        customerEmail: activeUser.email || 'guest@magwear.com',
+        items: cartItems,
+        subtotal,
+        total: finalTotal,
+        promoCode: promoApplied ? promoCode : '',
+        discount,
+        shipping: estShipping
+      });
       setCheckoutStep('success');
-    }, 2000);
+    } catch (err) {
+      console.error("Submitting Firestore order error:", err);
+      setCheckoutStep('cart');
+    }
   };
 
   const handleDone = () => {
@@ -193,6 +220,39 @@ export default function ShoppingCart({
                     >
                       Browse Boutique
                     </button>
+
+                    {/* Past Orders History list */}
+                    {orders && orders.length > 0 && (
+                      <div className="w-full mt-10 pt-8 border-t border-neutral-100 dark:border-neutral-950 text-left">
+                        <h4 className="font-serif font-bold text-xs uppercase tracking-wider text-neutral-800 dark:text-neutral-300 mb-4 flex items-center justify-between">
+                          <span>Past Orders ({orders.length})</span>
+                          <span className="text-[10px] text-brand-orange uppercase font-display font-black tracking-widest leading-none">History</span>
+                        </h4>
+                        <div className="space-y-3 max-h-60 overflow-y-auto pr-1">
+                          {orders.map((ord) => (
+                            <div key={ord.id} className="p-3.5 rounded-xl border border-neutral-200 dark:border-neutral-850/70 bg-neutral-50 dark:bg-neutral-900/40 hover:border-brand-orange/15 transition-all duration-300">
+                              <div className="flex justify-between items-center mb-1.5">
+                                <span className="font-mono text-[9px] text-neutral-400 dark:text-neutral-500 font-bold uppercase">{ord.id}</span>
+                                <span className={`px-2 py-0.5 rounded-full text-[8px] font-display font-medium uppercase tracking-wider ${
+                                  ord.status.includes('Approved') || ord.status.includes('Shipped')
+                                    ? 'bg-green-500/10 text-green-500 border border-green-500/20' 
+                                    : 'bg-brand-orange/10 text-brand-orange border border-brand-orange/20 animate-pulse'
+                                }`}>
+                                  {ord.status}
+                                </span>
+                              </div>
+                              <div className="text-[11px] font-medium text-neutral-800 dark:text-neutral-200 line-clamp-1 mb-1">
+                                {ord.items.map(item => `${item.product.name} (x${item.quantity})`).join(', ')}
+                              </div>
+                              <div className="flex justify-between items-center text-[10px] text-neutral-550 dark:text-neutral-500 font-light mt-1.5 pt-1 border-t border-neutral-100 dark:border-neutral-900">
+                                <span>{new Date(ord.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                                <span className="font-mono text-brand-orange font-bold text-xs">${ord.total.toFixed(2)}</span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </motion.div>
 
                 ) : (

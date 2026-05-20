@@ -1,0 +1,130 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 1. Catch-all default deny security net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper Primitives
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    function isEmailVerified() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // Since we want to allow seeding and editing, we check if keys match
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // --- Entity Validations ---
+
+    function isValidProduct(data) {
+      return data.keys().hasAll(['id', 'name', 'category', 'price', 'description', 'image', 'rating', 'reviewsCount'])
+        && data.keys().size() <= 12
+        && data.id is string && data.id.size() <= 100
+        && data.name is string && data.name.size() <= 200
+        && data.category is string && (data.category == 'sneakers' || data.category == 'perfumes' || data.category == 'clothing')
+        && data.price is number && data.price >= 0
+        && data.description is string && data.description.size() <= 3000
+        && data.image is string && data.image.size() <= 1000
+        && data.rating is number && data.rating >= 0 && data.rating <= 5
+        && data.reviewsCount is int && data.reviewsCount >= 0;
+    }
+
+    function isValidTestimonial(data) {
+      return data.keys().hasAll(['id', 'name', 'role', 'comment', 'avatar', 'rating'])
+        && data.keys().size() == 6
+        && data.id is string && data.id.size() <= 100
+        && data.name is string && data.name.size() <= 200
+        && data.role is string && data.role.size() <= 200
+        && data.comment is string && data.comment.size() <= 2000
+        && data.avatar is string && data.avatar.size() <= 1000
+        && data.rating is number && data.rating >= 0 && data.rating <= 5;
+    }
+
+    function isValidInquiry(data) {
+      return data.keys().hasAll(['id', 'name', 'email', 'interest', 'message', 'createdAt'])
+        && data.keys().size() <= 8
+        && data.id is string && data.id.size() <= 100
+        && data.name is string && data.name.size() <= 200
+        && data.email is string && data.email.size() <= 200
+        && data.interest is string && data.interest.size() <= 250
+        && data.message is string && data.message.size() <= 4000
+        && data.createdAt == request.time
+        && (!data.keys().hasAny(['userId']) || (data.userId is string && data.userId.size() <= 100));
+    }
+
+    function isValidOrder(data) {
+      return data.keys().hasAll(['id', 'userId', 'customerEmail', 'customerName', 'items', 'subtotal', 'total', 'status', 'createdAt'])
+        && data.keys().size() <= 12
+        && data.id is string && data.id.size() <= 100
+        && data.userId is string && data.userId.size() <= 100
+        && data.customerEmail is string && data.customerEmail.size() <= 200
+        && data.customerName is string && data.customerName.size() <= 200
+        && data.items is list && data.items.size() <= 50
+        && data.subtotal is number && data.subtotal >= 0
+        && data.total is number && data.total >= 0
+        && data.status is string && data.status.size() <= 50
+        && data.createdAt == request.time;
+    }
+
+    // --- Collection Routes ---
+
+    // Products
+    match /products/{productId} {
+      allow read: if true;
+      allow create: if isSignedIn() && isValidId(productId) && isValidProduct(incoming());
+      allow update: if isSignedIn() && isValidProduct(incoming());
+      allow delete: if isSignedIn();
+    }
+
+    // Testimonials
+    match /testimonials/{testimonialId} {
+      allow read: if true;
+      allow create: if isSignedIn() && isValidId(testimonialId) && isValidTestimonial(incoming());
+      allow update: if isSignedIn() && isValidTestimonial(incoming());
+      allow delete: if isSignedIn();
+    }
+
+    // Inquiries - Created of any client, but read/update guarded
+    match /inquiries/{inquiryId} {
+      allow create: if isValidId(inquiryId) 
+        && isValidInquiry(incoming())
+        && (!incoming().keys().hasAny(['userId']) || (isSignedIn() && incoming().userId == request.auth.uid));
+      // Only the author can read their inquiry
+      allow get: if isSignedIn() && existing().userId == request.auth.uid;
+      allow list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow update, delete: if false;
+    }
+
+    // Orders - Placed by authenticated users
+    match /orders/{orderId} {
+      allow create: if isSignedIn()
+        && isEmailVerified()
+        && isValidId(orderId)
+        && isValidOrder(incoming())
+        && incoming().userId == request.auth.uid;
+        
+      allow get, list: if isSignedIn()
+        && resource.data.userId == request.auth.uid;
+        
+      allow update, delete: if false; // orders are immutable once sealed
+    }
+  }
+}

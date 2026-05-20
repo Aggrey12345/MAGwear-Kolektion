@@ -25,3 +25,29 @@ export interface Testimonial {
   avatar: string;
   rating: number;
 }
+
+export interface Inquiry {
+  id: string;
+  name: string;
+  email: string;
+  interest: string;
+  message: string;
+  userId?: string;
+  createdAt: any;
+}
+
+export interface Order {
+  id: string;
+  userId: string;
+  customerEmail: string;
+  customerName: string;
+  items: CartItem[];
+  subtotal: number;
+  total: number;
+  status: string;
+  createdAt: any;
+  promoCode?: string;
+  discount?: number;
+  shipping?: number;
+}
+

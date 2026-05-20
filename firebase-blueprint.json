@@ -1,0 +1,90 @@
+{
+  "entities": {
+    "Product": {
+      "title": "Product",
+      "description": "A luxury curated item in sneakers, perfumes, or clothing category",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "category": { "type": "string", "enum": ["sneakers", "perfumes", "clothing"] },
+        "price": { "type": "number" },
+        "description": { "type": "string" },
+        "image": { "type": "string" },
+        "tag": { "type": "string" },
+        "rating": { "type": "number" },
+        "reviewsCount": { "type": "number" },
+        "colorway": { "type": "string" },
+        "specs": { "type": "array" }
+      },
+      "required": ["id", "name", "category", "price", "description", "image", "rating", "reviewsCount"]
+    },
+    "Testimonial": {
+      "title": "Testimonial",
+      "description": "An endorsement or style statement from a customer",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "role": { "type": "string" },
+        "comment": { "type": "string" },
+        "avatar": { "type": "string" },
+        "rating": { "type": "number" }
+      },
+      "required": ["id", "name", "role", "comment", "avatar", "rating"]
+    },
+    "Inquiry": {
+      "title": "Inquiry",
+      "description": "A contact submission request for bespoke items or custom collections",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "interest": { "type": "string" },
+        "message": { "type": "string" },
+        "userId": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "name", "email", "interest", "message", "createdAt"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "A secured curation bag purchase transaction",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "customerEmail": { "type": "string" },
+        "customerName": { "type": "string" },
+        "items": { "type": "array" },
+        "subtotal": { "type": "number" },
+        "discount": { "type": "number" },
+        "shipping": { "type": "number" },
+        "total": { "type": "number" },
+        "promoCode": { "type": "string" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "userId", "customerEmail", "customerName", "items", "subtotal", "total", "status", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/products/{productId}": {
+      "schema": "Product",
+      "description": "The public product catalog"
+    },
+    "/testimonials/{testimonialId}": {
+      "schema": "Testimonial",
+      "description": "Verified client endorsements"
+    },
+    "/inquiries/{inquiryId}": {
+      "schema": "Inquiry",
+      "description": "Custom fit and fashion inquiries"
+    },
+    "/orders/{orderId}": {
+      "schema": "Order",
+      "description": "User purchases and curated selections"
+    }
+  }
+}

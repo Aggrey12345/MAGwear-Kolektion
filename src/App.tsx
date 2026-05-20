@@ -6,12 +6,13 @@ import OwnerProfile from './components/OwnerProfile';
 import ContactForm from './components/ContactForm';
 import Footer from './components/Footer';
 import ShoppingCart from './components/ShoppingCart';
-import { productsData, testimonialsData } from './data';
+import { useFirebase } from './components/FirebaseProvider';
 import { Product, CartItem } from './types';
 import { Search, Gift, Sparkles, Filter, Star, CheckCircle, HelpCircle, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 export default function App() {
+  const { products, testimonials } = useFirebase();
   const [darkMode, setDarkMode] = useState<boolean>(() => {
     // Sync with local storage or choose dark by default for luxury street look
     const val = localStorage.getItem('magwear-theme');
@@ -120,9 +121,9 @@ export default function App() {
     });
   };
 
-  const sneakerList = filterProducts(productsData, sneakerSearch, 'sneakers');
-  const perfumeList = filterProducts(productsData, perfumeSearch, 'perfumes');
-  const clothingList = filterProducts(productsData, clothingSearch, 'clothing');
+  const sneakerList = filterProducts(products, sneakerSearch, 'sneakers');
+  const perfumeList = filterProducts(products, perfumeSearch, 'perfumes');
+  const clothingList = filterProducts(products, clothingSearch, 'clothing');
 
   const cartItemsCount = cartItems.reduce((acc, curr) => acc + curr.quantity, 0);
 
@@ -381,7 +382,7 @@ export default function App() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonialsData.map((test) => (
+            {testimonials.map((test) => (
               <div 
                 key={test.id}
                 className="p-8 rounded-2xl bg-neutral-900 border border-neutral-850 flex flex-col justify-between"

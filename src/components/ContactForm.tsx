@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { Mail, Phone, Facebook, Send, CheckCircle2, MessageSquare, Clock, MapPin, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ownerProfile } from '../data';
+import { useFirebase } from './FirebaseProvider';
 
 export default function ContactForm() {
+  const { submitInquiry } = useFirebase();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -13,15 +15,13 @@ export default function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.email || !formData.message) return;
 
     setIsSubmitting(true);
-    
-    // Simulate premium backend post
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      await submitInquiry(formData);
       setIsSubmitted(true);
       // Reset form fields
       setFormData({
@@ -30,7 +30,11 @@ export default function ContactForm() {
         interest: 'Sneakers Curation',
         message: ''
       });
-    }, 1800);
+    } catch (error) {
+      console.error("Transmitting inquiry failed:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {

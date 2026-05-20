@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Sun, Moon, ShoppingBag, Flame, Sparkles } from 'lucide-react';
+import { Menu, X, Sun, Moon, ShoppingBag, Flame, Sparkles, LogIn, LogOut } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useFirebase } from './FirebaseProvider';
+import { signInWithGoogle, signOutUser } from '../firebase';
 
 interface NavbarProps {
   darkMode: boolean;
@@ -10,6 +12,7 @@ interface NavbarProps {
 }
 
 export default function Navbar({ darkMode, setDarkMode, cartItemsCount, onOpenCart }: NavbarProps) {
+  const { user, isAdmin } = useFirebase();
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeItem, setActiveItem] = useState('home');
@@ -135,6 +138,41 @@ export default function Navbar({ darkMode, setDarkMode, cartItemsCount, onOpenCa
                 </span>
               )}
             </button>
+
+            {/* Google Authentication Profile Chip */}
+            {user ? (
+              <div className="flex items-center gap-2 pl-2 border-l border-neutral-800">
+                <img 
+                  src={user.photoURL || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb'} 
+                  alt={user.displayName || 'Curator'} 
+                  className="w-7 h-7 rounded-lg object-cover border border-neutral-800 animate-fade-in"
+                  referrerPolicy="no-referrer"
+                />
+                <div className="flex flex-col text-left">
+                  <span className="text-[10px] font-bold text-neutral-200 uppercase tracking-tight truncate max-w-[80px]">
+                    {user.displayName?.split(' ')[0]}
+                  </span>
+                  <span className="text-[8px] text-brand-orange leading-[1] font-medium tracking-wide">
+                    {isAdmin ? 'OWNER' : 'CLIENT'}
+                  </span>
+                </div>
+                <button 
+                  onClick={signOutUser}
+                  className="p-1.5 rounded-lg border border-neutral-800 hover:border-red-500/40 text-neutral-400 hover:text-red-500 transition-colors cursor-pointer ml-1"
+                  title="Sign Out"
+                >
+                  <LogOut className="w-3 h-3" />
+                </button>
+              </div>
+            ) : (
+              <button 
+                onClick={signInWithGoogle}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-neutral-800 bg-neutral-950 text-neutral-300 hover:text-white hover:border-brand-orange/40 transition-all duration-300 text-xs font-semibold cursor-pointer"
+              >
+                <LogIn className="w-3.5 h-3.5" />
+                <span className="text-[10px] uppercase font-bold tracking-wider">Join</span>
+              </button>
+            )}
           </div>
 
           {/* Mobile Buttons Left of Burger */}
@@ -199,6 +237,44 @@ export default function Navbar({ darkMode, setDarkMode, cartItemsCount, onOpenCa
                   <span className={`w-1.5 h-1.5 rounded-full ${activeItem === item.id ? 'bg-brand-orange' : 'bg-transparent'}`}></span>
                 </motion.button>
               ))}
+
+              {/* Mobile Auth options */}
+              <div className="pt-3 border-t border-neutral-900 flex items-center justify-between px-4 mt-4">
+                {user ? (
+                  <div className="flex items-center gap-2">
+                    <img 
+                      src={user.photoURL || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb'} 
+                      alt="User" 
+                      className="w-7 h-7 rounded-lg object-cover border border-neutral-800"
+                      referrerPolicy="no-referrer"
+                    />
+                    <div>
+                      <div className="text-[10px] font-bold text-white uppercase tracking-tight">{user.displayName?.split(' ')[0]}</div>
+                      <div className="text-[8px] text-brand-orange tracking-widest uppercase font-semibold">{isAdmin ? 'Owner' : 'Client'}</div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-[9px] uppercase font-bold tracking-widest text-neutral-500">Guest Client</div>
+                )}
+                
+                {user ? (
+                  <button
+                    onClick={signOutUser}
+                    className="flex items-center gap-1.5 py-1.5 px-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 text-[10px] font-bold uppercase tracking-wider cursor-pointer"
+                  >
+                    <LogOut className="w-3" h-3="" />
+                    <span>Out</span>
+                  </button>
+                ) : (
+                  <button
+                    onClick={signInWithGoogle}
+                    className="flex items-center gap-1.5 py-1.5 px-3 rounded-lg bg-brand-orange/10 border border-brand-orange/20 text-brand-orange text-[10px] font-black uppercase tracking-wider cursor-pointer"
+                  >
+                    <LogIn className="w-3" h-3="" />
+                    <span>Join</span>
+                  </button>
+                )}
+              </div>
             </div>
           </motion.div>
         )}
