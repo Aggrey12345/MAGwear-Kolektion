@@ -5,7 +5,7 @@ export const ownerProfile = {
   name: "Aggrey Mathias",
   brandName: "MAGwear Kolektions",
   title: "Fashion Entrepreneur & Boutique Owner",
-  profileImage: "/src/assets/images/profile_aggrey_original_1779296840154.png",
+  profileImage: "/src/assets/images/aggrey_profile_new_1779219582430.png",
   bio: "Aggrey Mathias is a forward-thinking fashion entrepreneur and the visionary founder of MAGwear Kolektions. With a sharp eye for contemporary streetwear culture and traditional luxury curation, Aggrey builds curated collections that bridge elite sneakers, artisanal unisex fragrances, and bespoke cut-and-sew apparel. Driven by a commitment to exquisite craftsmanship and premium self-expression, he establishes MAGwear as a premier destination for those who view fashion not as mere clothing, but as a personalized luxury signature.",
   socials: {
     facebook: "https://facebook.com/Mathias.Garo.Aggrey", // Mathias Garo Aggrey
