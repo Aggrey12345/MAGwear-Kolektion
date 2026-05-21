@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import ProductCard from './components/ProductCard';
-import OwnerProfile from './components/OwnerProfile';
 import ContactForm from './components/ContactForm';
 import Footer from './components/Footer';
 import ShoppingCart from './components/ShoppingCart';
@@ -363,9 +362,6 @@ export default function App() {
         </section>
 
       </div>
-
-      {/* ================= CURATOR BIOGRAPHY SECTION ================= */}
-      <OwnerProfile />
 
       {/* ================= TESTIMONIALS SECTION ================= */}
       <section className="py-24 bg-black/60 dark:bg-black/90 text-white relative border-t border-neutral-900">

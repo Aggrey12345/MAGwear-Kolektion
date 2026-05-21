@@ -2,6 +2,7 @@ import React from 'react';
 import { Mail, Phone, Facebook, Instagram, Twitter, Award, Compass, Sparkles, CheckCircle2 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { ownerProfile } from '../data';
+import { PROFILE_IMAGE_BASE64 } from './profileImageBase64';
 
 export default function OwnerProfile() {
   const credentials = [
@@ -52,7 +53,7 @@ export default function OwnerProfile() {
               {/* Main Image */}
               <div className="relative z-10 w-full h-full rounded-2xl border-2 border-brand-gold/40 overflow-hidden transform group-hover:rotate-1 group-hover:scale-102 transition-transform duration-500">
                 <img
-                  src={ownerProfile.profileImage}
+                  src={PROFILE_IMAGE_BASE64}
                   alt={ownerProfile.name}
                   className="w-full h-full object-cover rounded-2xl filter brightness-95"
                   referrerPolicy="no-referrer"

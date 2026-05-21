@@ -1,11 +1,12 @@
 import { Product, Testimonial } from './types';
+import { PROFILE_IMAGE_BASE64 } from './components/profileImageBase64';
 
 // Generated luxury assets paths from file generation
 export const ownerProfile = {
   name: "Aggrey Mathias",
   brandName: "MAGwear Kolektions",
   title: "Fashion Entrepreneur & Boutique Owner",
-  profileImage: "/src/assets/images/1723491089022.jpg",
+  profileImage: PROFILE_IMAGE_BASE64,
   bio: "Aggrey Mathias is a forward-thinking fashion entrepreneur and the visionary founder of MAGwear Kolektions. With a sharp eye for contemporary streetwear culture and traditional luxury curation, Aggrey builds curated collections that bridge elite sneakers, artisanal unisex fragrances, and bespoke cut-and-sew apparel. Driven by a commitment to exquisite craftsmanship and premium self-expression, he establishes MAGwear as a premier destination for those who view fashion not as mere clothing, but as a personalized luxury signature.",
   socials: {
     facebook: "https://facebook.com/Mathias.Garo.Aggrey", // Mathias Garo Aggrey
