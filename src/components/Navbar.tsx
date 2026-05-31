@@ -22,7 +22,7 @@ export default function Navbar({ darkMode, setDarkMode, cartItemsCount, onOpenCa
       setIsScrolled(window.scrollY > 20);
       
       // Basic active item highlighting based on scroll position
-      const sections = ['home', 'sneakers', 'perfumes', 'clothing', 'profile', 'contact'];
+      const sections = ['home', 'sneakers', 'perfumes', 'clothing', 'story-gallery', 'profile', 'contact'];
       for (const section of sections) {
         const el = document.getElementById(section);
         if (el) {
@@ -44,6 +44,7 @@ export default function Navbar({ darkMode, setDarkMode, cartItemsCount, onOpenCa
     { label: 'Sneakers', id: 'sneakers' },
     { label: 'Perfumes', id: 'perfumes' },
     { label: 'Clothing', id: 'clothing' },
+    { label: 'Gallery', id: 'story-gallery' },
     { label: 'Profile', id: 'profile' },
     { label: 'Contact', id: 'contact' },
   ];

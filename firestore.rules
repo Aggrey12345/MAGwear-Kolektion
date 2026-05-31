@@ -84,6 +84,27 @@ service cloud.firestore {
         && data.createdAt == request.time;
     }
 
+    function isValidAlbum(data) {
+      return data.keys().hasAll(['id', 'name', 'ownerId', 'createdAt'])
+        && data.keys().size() <= 5
+        && data.id is string && data.id.size() <= 100
+        && data.name is string && data.name.size() <= 200
+        && data.ownerId is string && data.ownerId.size() <= 100
+        && data.createdAt == request.time
+        && (!data.keys().hasAny(['description']) || (data.description is string && data.description.size() <= 1000));
+    }
+
+    function isValidPhoto(data) {
+      return data.keys().hasAll(['id', 'albumId', 'userId', 'url', 'createdAt', 'title'])
+        && data.keys().size() == 6
+        && data.id is string && data.id.size() <= 100
+        && data.albumId is string && data.albumId.size() <= 100
+        && data.userId is string && data.userId.size() <= 100
+        && data.url is string && data.url.size() <= 1048487
+        && data.createdAt == request.time
+        && data.title is string && data.title.size() <= 200;
+    }
+
     // --- Collection Routes ---
 
     // Products
@@ -125,6 +146,42 @@ service cloud.firestore {
         && resource.data.userId == request.auth.uid;
         
       allow update, delete: if false; // orders are immutable once sealed
+    }
+
+    // Albums - Portfolio collections
+    match /albums/{albumId} {
+      allow create: if isSignedIn()
+        && isValidId(albumId)
+        && isValidAlbum(incoming())
+        && incoming().ownerId == request.auth.uid;
+        
+      allow get, list: if isSignedIn()
+        && resource.data.ownerId == request.auth.uid;
+        
+      allow update: if isSignedIn()
+        && isValidAlbum(incoming())
+        && existing().ownerId == request.auth.uid
+        && incoming().ownerId == existing().ownerId;
+        
+      allow delete: if isSignedIn()
+        && existing().ownerId == request.auth.uid;
+    }
+
+    // Photos - Compressed snapshots
+    match /photos/{photoId} {
+      allow create: if isSignedIn()
+        && isValidId(photoId)
+        && isValidPhoto(incoming())
+        && incoming().userId == request.auth.uid
+        && get(/databases/$(database)/documents/albums/$(incoming().albumId)).data.ownerId == request.auth.uid;
+        
+      allow get, list: if isSignedIn()
+        && resource.data.userId == request.auth.uid;
+        
+      allow update: if false;
+      
+      allow delete: if isSignedIn()
+        && existing().userId == request.auth.uid;
     }
   }
 }

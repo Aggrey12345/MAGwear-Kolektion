@@ -67,6 +67,33 @@
         "createdAt": { "type": "string" }
       },
       "required": ["id", "userId", "customerEmail", "customerName", "items", "subtotal", "total", "status", "createdAt"]
+    },
+    "Album": {
+      "title": "Album",
+      "description": "A custom user folder containing lookbook snaps",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "ownerId": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "description": { "type": "string" }
+      },
+      "required": ["id", "name", "ownerId", "createdAt"]
+    },
+    "Photo": {
+      "title": "Photo",
+      "description": "A high-performance base64 compressed snapshot of a lookbook style",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "albumId": { "type": "string" },
+        "userId": { "type": "string" },
+        "url": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "title": { "type": "string" }
+      },
+      "required": ["id", "albumId", "userId", "url", "createdAt", "title"]
     }
   },
   "firestore": {
@@ -85,6 +112,14 @@
     "/orders/{orderId}": {
       "schema": "Order",
       "description": "User purchases and curated selections"
+    },
+    "/albums/{albumId}": {
+      "schema": "Album",
+      "description": "User created lookbook albums"
+    },
+    "/photos/{photoId}": {
+      "schema": "Photo",
+      "description": "User uploaded lookbook photos stored as compressed base64 content"
     }
   }
 }

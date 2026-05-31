@@ -90,9 +90,9 @@ export default function OwnerProfile() {
               </div>
 
               {/* Bio text */}
-              <p className="text-neutral-600 dark:text-neutral-400 text-xs sm:text-sm leading-relaxed mb-6 font-light">
+              <div className="text-neutral-650 dark:text-neutral-400 text-xs sm:text-sm leading-relaxed mb-6 font-light whitespace-pre-line space-y-4">
                 {ownerProfile.bio}
-              </p>
+              </div>
 
               {/* Curation highlights bullets */}
               <div className="mb-8">

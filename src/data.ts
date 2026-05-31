@@ -3,11 +3,11 @@ import { PROFILE_IMAGE_BASE64 } from './components/profileImageBase64';
 
 // Generated luxury assets paths from file generation
 export const ownerProfile = {
-  name: "Aggrey Mathias",
-  brandName: "MAGwear Kolektions",
-  title: "Fashion Entrepreneur & Boutique Owner",
+  name: "Mathias Aggrey",
+  brandName: "MAGwear Kolektionz",
+  title: "Founder & CEO",
   profileImage: PROFILE_IMAGE_BASE64,
-  bio: "Aggrey Mathias is a forward-thinking fashion entrepreneur and the visionary founder of MAGwear Kolektions. With a sharp eye for contemporary streetwear culture and traditional luxury curation, Aggrey builds curated collections that bridge elite sneakers, artisanal unisex fragrances, and bespoke cut-and-sew apparel. Driven by a commitment to exquisite craftsmanship and premium self-expression, he establishes MAGwear as a premier destination for those who view fashion not as mere clothing, but as a personalized luxury signature.",
+  bio: "My name is Mathias Aggrey, the founder and owner of MAGwear Kolektionz, a modern fashion brand dedicated to providing stylish sneakers, premium perfumes, and trendy clothing for individuals who value quality, confidence, and elegance.\n\nAs a passionate entrepreneur, I created MAGwear Kolektionz with the vision of bringing fashion, comfort, and luxury together in one place. My goal is to help customers express their unique personalities through carefully selected footwear, fragrances, and clothing collections that match modern lifestyles.\n\nAt MAGwear Kolektionz, we believe that fashion is more than just what you wear—it's a statement of confidence and individuality. We are committed to offering high-quality products, exceptional customer service, and a seamless shopping experience.\n\nWhether you're looking for the latest sneakers, signature perfumes, or fashionable outfits, MAGwear Kolektionz is your trusted destination for style and excellence.",
   socials: {
     facebook: "https://facebook.com/Mathias.Garo.Aggrey", // Mathias Garo Aggrey
     email: "aggreymathias96@gmail.com",

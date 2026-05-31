@@ -51,3 +51,20 @@ export interface Order {
   shipping?: number;
 }
 
+export interface Album {
+  id: string;
+  name: string;
+  ownerId: string;
+  createdAt: any;
+  description?: string;
+}
+
+export interface Photo {
+  id: string;
+  albumId: string;
+  userId: string;
+  url: string; // base64 content
+  createdAt: any;
+  title: string;
+}
+
