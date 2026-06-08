@@ -1,10 +1,74 @@
-import React from 'react';
-import { Mail, Phone, Facebook, Instagram, Twitter, Award, Compass, Sparkles, CheckCircle2 } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Mail, Phone, Facebook, Instagram, Twitter, Award, Compass, Sparkles, CheckCircle2, Camera } from 'lucide-react';
 import { motion } from 'motion/react';
 import { ownerProfile } from '../data';
 import { PROFILE_IMAGE_BASE64 } from './profileImageBase64';
 
 export default function OwnerProfile() {
+  const [profilePic, setProfilePic] = useState<string>(PROFILE_IMAGE_BASE64);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const savedPic = localStorage.getItem('magwear_profile_picture_custom');
+    if (savedPic) {
+      setProfilePic(savedPic);
+    }
+  }, []);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (!file.type.startsWith('image/')) {
+        alert('Please select an image file (PNG, JPG, JPEG, GIF etc.).');
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64 = reader.result as string;
+        try {
+          localStorage.setItem('magwear_profile_picture_custom', base64);
+          setProfilePic(base64);
+        } catch (error) {
+          // If image too large for localStorage, compress on the fly using a canvas
+          const img = new Image();
+          img.src = base64;
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const maxDim = 512;
+            let width = img.width;
+            let height = img.height;
+            if (width > maxDim || height > maxDim) {
+              if (width > height) {
+                height = Math.round((height * maxDim) / width);
+                width = maxDim;
+              } else {
+                width = Math.round((width * maxDim) / height);
+                height = maxDim;
+              }
+            }
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx?.drawImage(img, 0, 0, width, height);
+            const compressedBase64 = canvas.toDataURL('image/jpeg', 0.8);
+            try {
+              localStorage.setItem('magwear_profile_picture_custom', compressedBase64);
+              setProfilePic(compressedBase64);
+            } catch (err) {
+              console.error('Storage quota exceeded even after compression:', err);
+            }
+          };
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const triggerFileSelect = () => {
+    fileInputRef.current?.click();
+  };
+
   const credentials = [
     "Over a decade of streetwear and vintage luxury curation",
     "Specialist in bespoke fragrance notes and oil extracts",
@@ -51,15 +115,34 @@ export default function OwnerProfile() {
               <div className="absolute inset-0 rounded-2xl bg-black z-0 shadow-2xl" />
 
               {/* Main Image */}
-              <div className="relative z-10 w-full h-full rounded-2xl border-2 border-brand-gold/40 overflow-hidden transform group-hover:rotate-1 group-hover:scale-102 transition-transform duration-500">
+              <div 
+                onClick={triggerFileSelect}
+                className="relative z-10 w-full h-full rounded-2xl border-2 border-brand-gold/40 overflow-hidden transform group-hover:rotate-1 group-hover:scale-102 transition-transform duration-500 cursor-pointer"
+              >
                 <img
-                  src={PROFILE_IMAGE_BASE64}
+                  src={profilePic}
                   alt={ownerProfile.name}
-                  className="w-full h-full object-cover rounded-2xl filter brightness-95"
+                  className="w-full h-full object-cover rounded-2xl filter brightness-95 transition-all duration-350 group-hover:scale-105"
                   referrerPolicy="no-referrer"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-300" />
+                
+                {/* Custom Photo Overlay with Camera icon */}
+                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center gap-2">
+                  <Camera className="w-8 h-8 text-brand-gold animate-bounce" />
+                  <span className="font-display text-xs font-bold text-white uppercase tracking-wider">Change Profile Pic</span>
+                  <span className="text-[10px] text-neutral-300">JPG, PNG or GIF</span>
+                </div>
+                
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent opacity-60 group-hover:opacity-20 transition-opacity duration-300 pointer-events-none" />
               </div>
+              
+              <input 
+                type="file" 
+                ref={fileInputRef} 
+                onChange={handleImageChange} 
+                accept="image/*" 
+                className="hidden" 
+              />
 
               {/* Float Badge overlay */}
               <div className="absolute -bottom-4 -right-4 z-25 p-3 rounded-2xl bg-black border border-neutral-800 text-brand-gold shadow-lg shadow-black/80 flex items-center gap-1.5 transform group-hover:translate-x-1 group-hover:translate-y-1 transition-transform duration-300">
